@@ -10,6 +10,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class NECCommonConfig {
         configFile = new File(FMLPaths.CONFIGDIR.get().toFile(),"notenoughchest-config.json");
         if (configFile.exists()){
             JsonObject config = new Gson().fromJson(new FileReader(configFile),JsonObject.class);
-            modsBlacklist = config.getAsJsonArray("blacklistedMods").asList().stream().map(JsonElement::getAsString).collect(Collectors.toList());
+            config.getAsJsonArray("blacklistedMods").forEach(m->modsBlacklist.add(m.toString()));
         } else {
             JsonObject config = new JsonObject();
             JsonArray blacklist = new JsonArray();

@@ -8,21 +8,19 @@ import fr.iglee42.notenoughchest.custompack.PackType;
 import fr.iglee42.notenoughchest.custompack.PathConstant;
 import fr.iglee42.notenoughchest.custompack.generation.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.repository.PackRepository;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -53,14 +51,6 @@ public class NotEnoughChest {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
 
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
-
-    public static final RegistryObject<CreativeModeTab> TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.nec"))
-            .withTabsBefore(CreativeModeTabs.COMBAT)
-            .icon(Items.CHEST::getDefaultInstance)
-            .build());
-
     public static final RegistryObject<BlockEntityType<CustomChestBlockEntity>> CHEST = BLOCK_ENTITIES.register("chest", ()->BlockEntityType.Builder.of(CustomChestBlockEntity::new).build(null));
 
 
@@ -83,7 +73,7 @@ public class NotEnoughChest {
             String woodType = rs.getPath().replace("_planks","");
             PLANK_TYPES.add(woodType);
             WOOD_TYPES.add(new ResourceLocation(rs.getPath().replace("_planks","").toLowerCase()));
-            RegistryObject<Block> chest = BLOCKS.register(woodType.toLowerCase() + "_chest", ()-> new CustomChestBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS).strength(2.5F).sound(SoundType.WOOD).ignitedByLava(), CHEST::get,PLANK_TYPES.indexOf(woodType)));
+            RegistryObject<Block> chest = BLOCKS.register(woodType.toLowerCase() + "_chest", ()-> new CustomChestBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD), CHEST::get,PLANK_TYPES.indexOf(woodType)));
             ITEMS.register(woodType.toLowerCase() +"_chest",()->new BlockItem(chest.get(),new Item.Properties()){
                 @Override
                 public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
@@ -96,7 +86,7 @@ public class NotEnoughChest {
             String woodType = "menril";
             PLANK_TYPES.add(woodType);
             WOOD_TYPES.add(new ResourceLocation("integrateddynamics",woodType));
-            RegistryObject<Block> chest = BLOCKS.register(woodType.toLowerCase() + "_chest", ()-> new CustomChestBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS).strength(2.5F).sound(SoundType.WOOD).ignitedByLava(), CHEST::get,PLANK_TYPES.indexOf(woodType)));
+            RegistryObject<Block> chest = BLOCKS.register(woodType.toLowerCase() + "_chest", ()-> new CustomChestBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD), CHEST::get,PLANK_TYPES.indexOf(woodType)));
             ITEMS.register(woodType.toLowerCase() +"_chest",()->new BlockItem(chest.get(),new Item.Properties()){
                 @Override
                 public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
@@ -115,14 +105,12 @@ public class NotEnoughChest {
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
         ITEMS.register(modEventBus);
-        CREATIVE_MODE_TABS.register(modEventBus);
         PathConstant.init();
 
 
         MinecraftForge.EVENT_BUS.addListener(this::onServerStart);
         MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
 
-        modEventBus.addListener(this::addCreative);
 
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -146,7 +134,7 @@ public class NotEnoughChest {
                 String woodType = id.getPath().replace("_planks", "");
                 WOOD_TYPES.add(new ResourceLocation(id.getNamespace(), woodType.toLowerCase()));
                 PLANK_TYPES.add(woodType);
-                event.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(MODID, woodType + "_chest"), () -> new CustomChestBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS).strength(2.5F).sound(SoundType.WOOD).ignitedByLava(), CHEST::get, PLANK_TYPES.indexOf(woodType)));
+                event.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(MODID, woodType + "_chest"), () -> new CustomChestBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD), CHEST::get, PLANK_TYPES.indexOf(woodType)));
             }
         } else if (registryName.getPath().equals("item")) {
             if (id.getPath().endsWith("_planks")) {
@@ -166,12 +154,6 @@ public class NotEnoughChest {
 
 
 
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == TAB.getKey()) {
-            ForgeRegistries.ITEMS.getKeys().stream().filter(rs -> rs.getNamespace().equals(MODID)).forEach(rs ->
-                    event.accept(ForgeRegistries.ITEMS.getValue(rs)));
-        }
-    }
     public void onServerStarted(final ServerStartedEvent event) {
         /*Timer timer = new Timer();
         timer.schedule(new TimerTask() {

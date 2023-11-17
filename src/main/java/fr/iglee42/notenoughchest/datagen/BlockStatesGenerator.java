@@ -1,7 +1,7 @@
 package fr.iglee42.notenoughchest.datagen;
 
 import fr.iglee42.notenoughchest.NotEnoughChest;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -10,7 +10,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
 public class BlockStatesGenerator extends BlockStateProvider {
-    public BlockStatesGenerator(PackOutput output, String modid, ExistingFileHelper exFileHelper) {
+    public BlockStatesGenerator(DataGenerator output, String modid, ExistingFileHelper exFileHelper) {
         super(output, modid, exFileHelper);
     }
 

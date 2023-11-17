@@ -1,14 +1,14 @@
 package fr.iglee42.notenoughchest.datagen;
 
 import fr.iglee42.notenoughchest.NotEnoughChest;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.registries.RegistryObject;
 
 public class LangGenerator extends LanguageProvider {
 
-    public LangGenerator(PackOutput output, String modid, String locale) {
+    public LangGenerator(DataGenerator output, String modid, String locale) {
         super(output, modid, locale);
     }
 

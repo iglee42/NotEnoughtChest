@@ -17,10 +17,10 @@ public class DataGeneration {
         DataGenerator generator = e.getGenerator();
         ExistingFileHelper efh = e.getExistingFileHelper();
 
-        generator.addProvider(e.includeServer(),new RecipeGenerator(generator.getPackOutput()));
+        generator.addProvider(e.includeServer(),new RecipeGenerator(generator));
 
-        generator.addProvider(e.includeClient(),new ItemModelsGenerator(generator.getPackOutput(), MODID, efh));
-        generator.addProvider(e.includeClient(), new BlockStatesGenerator(generator.getPackOutput(), MODID, efh));
-        generator.addProvider(e.includeClient(), new LangGenerator(generator.getPackOutput(),MODID,"en_us"));
+        generator.addProvider(e.includeClient(),new ItemModelsGenerator(generator, MODID, efh));
+        generator.addProvider(e.includeClient(), new BlockStatesGenerator(generator, MODID, efh));
+        generator.addProvider(e.includeClient(), new LangGenerator(generator,MODID,"en_us"));
     }
 }
